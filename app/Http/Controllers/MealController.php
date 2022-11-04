@@ -16,7 +16,7 @@ class MealController extends Controller
      */
     public function index()
     {
-        return Meal::all();
+        return Meal::all()->toJson();
     }
 
     /**

@@ -1,14 +1,19 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Web\AuthController as WebAuthController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
-// Route::post('login', [AuthController::class, 'login'])->name('login');
+Route::get('/', [WebAuthController::class, 'loginIndex'])->name('login');
+Route::post('login', [WebAuthController::class, 'login'])->name('login');
+
+Route::get('register', [WebAuthController::class, 'registerIndex'])->name('register');
+Route::post('register', [WebAuthController::class, 'register'])->name('register');
 
 Route::middleware([
     'auth:sanctum',

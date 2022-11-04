@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web;
 
-use App\Models\Meal;
-use App\Http\Requests\StoreMealRequest;
-use App\Http\Requests\UpdateMealRequest;
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,6 +10,15 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    public function loginIndex()
+    {
+        return view('auth.login');
+    }
+
+    public function registerIndex()
+    {
+        return view('auth.register');
+    }
 
     public function login(Request $request)
     {
@@ -23,27 +30,23 @@ class AuthController extends Controller
         $user = User::query()->where('email', $request->email)->firstOrFail();
 
         if (!Hash::check($request->password, $user->password)) {
-            return response()->json('Credential data is not correct', 422);
+            return redirect()->back()->withErrors('message', 'Credential data is not correct');
         }
 
         if (Auth::attempt(credentials: $credentials)) {
             $token = $user->createToken($request->email);
-            return response()->json([
-                'user' => $user,
-                'token' => $token->plainTextToken
-            ]);
+            return redirect()->route('dashboard');
         }
 
-        return response()->json('Credential data is not correct', 422);
+        return redirect()->back()->withErrors(['message' => 'Credential data is not correct']);
     }
 
     public function register(Request $request)
     {
-
         $data = $request->validate([
             'name' => 'required|string',
             'email' => 'required|email',
-            'phone_number' => 'required|numeric',
+            'phone_number' => 'required|string',
             'password' => 'required|string|confirmed',
             'image' => 'required|image',
         ]);
@@ -61,6 +64,6 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
-        return response()->json(true);
+        return redirect()->route('login');
     }
 }

@@ -1,0 +1,35 @@
+<?php
+
+namespace App\View\Components\Forms;
+
+use App\View\Components\components\label;
+use Illuminate\View\Component;
+
+class Input extends Component
+{
+
+    public string $label;
+    /**
+     * Create a new component instance.
+     *
+     * @return void
+     */
+    public function __construct(
+        public string $type,
+        public string $placeholder,
+        public string $name,
+        string $label = null
+    ) {
+        $this->label = $label;
+    }
+
+    /**
+     * Get the view / contents that represent the component.
+     *
+     * @return \Illuminate\Contracts\View\View|\Closure|string
+     */
+    public function render()
+    {
+        return view('components.forms.input');
+    }
+}

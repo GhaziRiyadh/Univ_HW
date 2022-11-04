@@ -15,10 +15,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans h-screen w-screen flex items-center justify-center bg-gray-300">
-    <div class="font-sans w-2/3 bg-white shadow-lg p-10 rounded-2xl flex items-center justify-center">
-        {{ $slot }}
-    </div>
+<body class="font-sans w-screen">
+    {{-- nav --}}
+
 </body>
 
 </html>
