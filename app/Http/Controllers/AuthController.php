@@ -50,7 +50,7 @@ class AuthController extends Controller
 
         $data = $request->all();
 
-        $data['image'] = $request->file('image')->store(path: 'Users/Profile');
+        $data['image'] = $request->file('image')->store(path: 'Users/Profile', options: 'upload');
         $data['password'] = bcrypt($request->get('password'));
 
         User::query()->create($data);

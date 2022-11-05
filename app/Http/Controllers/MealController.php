@@ -38,7 +38,7 @@ class MealController extends Controller
     public function store(StoreMealRequest $request)
     {
         $data = $request->validated();
-        $data['image'] = $request->file('image')->store('Meals');
+        $data['image'] = $request->file('image')->store('Meals', options: 'upload');
         Meal::query()->create($data);
 
         return response()->json(true);
@@ -79,7 +79,7 @@ class MealController extends Controller
         if ($request->hasFile('image')) {
             if (File::exists(storage_path("app/{$meal->image}")))
                 File::delete(storage_path("app/{$meal->image}"));
-            $data['image'] = $request->file('image')->store('Meals');
+            $data['image'] = $request->file('image')->store('Meals', options: 'upload');
         }
 
         $meal->update($data);

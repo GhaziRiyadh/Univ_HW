@@ -1,16 +1,19 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\Web;
 
 use Illuminate\View\Component;
 
-class AddImage extends Component
+class MenuCard extends Component
 {
-    public string $defaultImage;
-
-    public function __construct(string $defaultImage)
+    /**
+     * Create a new component instance.
+     *
+     * @return void
+     */
+    public function __construct()
     {
-        $this->defaultImage = $defaultImage;
+        //
     }
 
     /**
@@ -20,6 +23,6 @@ class AddImage extends Component
      */
     public function render()
     {
-        return view('components.add-image');
+        return view('components.web.menu-card');
     }
 }

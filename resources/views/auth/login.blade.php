@@ -1,9 +1,9 @@
 <x-guest-layout>
 
     <div class="w-full">
-        @if ($errors->message)
+        @if (Session::get('message'))
             <div class="mb-4 font-medium text-sm text-green-600">
-                {{ $errors->message }}
+                {{ Session::get('message') }}
             </div>
         @endif
 
@@ -12,8 +12,8 @@
 
             <h1 class="text-xl text-gray-800 w-full text-center py-2">تسجيل الدخول</h1>
 
-            <x-forms.input type="email" label="" placeholder="اسم المستخدم" name="email" />
-            <x-forms.input type="password" label="" placeholder="كلمة السر" name="email" />
+            <x-forms.input value="" type="email" label="" placeholder="اسم المستخدم" name="email" />
+            <x-forms.input value="" type="password" label="" placeholder="كلمة السر" name="password" />
 
 
             <div class="flex items-center mt-4">

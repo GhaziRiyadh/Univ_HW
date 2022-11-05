@@ -9,6 +9,7 @@ class Input extends Component
 {
 
     public string $label;
+    public string $value;
     /**
      * Create a new component instance.
      *
@@ -18,9 +19,11 @@ class Input extends Component
         public string $type,
         public string $placeholder,
         public string $name,
-        string $label = null
+        string $label = null,
+        string $value = null
     ) {
         $this->label = $label;
+        $this->value = $value;
     }
 
     /**

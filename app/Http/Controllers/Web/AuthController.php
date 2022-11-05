@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -15,9 +16,11 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function registerIndex()
+    public function registerIndex(User $user = null)
     {
-        return view('auth.register');
+        return view('auth.register', [
+            'user' => $user
+        ]);
     }
 
     public function login(Request $request)
@@ -30,35 +33,43 @@ class AuthController extends Controller
         $user = User::query()->where('email', $request->email)->firstOrFail();
 
         if (!Hash::check($request->password, $user->password)) {
-            return redirect()->back()->withErrors('message', 'Credential data is not correct');
+            return redirect()->back()->with('message', 'Credential data is not correct');
         }
 
         if (Auth::attempt(credentials: $credentials)) {
-            $token = $user->createToken($request->email);
-            return redirect()->route('dashboard');
+            return redirect()->route('home');
         }
 
-        return redirect()->back()->withErrors(['message' => 'Credential data is not correct']);
+        return redirect()->back()->with('message', 'Can\'t login');
     }
 
-    public function register(Request $request)
+    public function register(Request $request, User $user = null)
     {
         $data = $request->validate([
             'name' => 'required|string',
             'email' => 'required|email',
             'phone_number' => 'required|string',
-            'password' => 'required|string|confirmed',
-            'image' => 'required|image',
+            'password' => $request->has('password') ? 'required|string|confirmed' : '',
+            'image' => 'required',
         ]);
 
-        $data = $request->all();
+        if ($request->hasFile('image')) {
 
-        $data['image'] = $request->file('image')->store(path: 'Users/Profile');
-        $data['password'] = bcrypt($request->get('password'));
+            if (File::exists(public_path($user?->image)))
+                File::delete(public_path($user?->image));
 
-        User::query()->create($data);
+            $data['image'] = '/' . $request->file('image')->store(path: 'Users/Profile', options: 'upload');
+        }
+        if (is_null($user))
+            $data['password'] = bcrypt($request->get('password'));
 
-        $this->login($request);
+        User::query()->updateOrCreate(['id' => $user?->id], $data);
+
+        if ($user?->id) {
+            return redirect()->route('home');
+        }
+
+        return redirect()->route('login');
     }
 
     public function logout(Request $request)
