@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Web\AuthController as WebAuthController;
+use App\Http\Controllers\Web\MealController;
 use App\Models\Meal;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -21,21 +22,24 @@ Route::middleware([
     'verified'
 ])->group(function () {
     Route::get('/home', function () {
-        return view('web.index', [
+        $props = [
             'meals' => Meal::all(),
             'user' => Auth::user(),
-        ]);
+        ];
+        return view('web.index', $props);
     })->name('home');
     // Route::get('/dashboard', function () {
     //     return view('dashboard');
     // })->name('dashboard');
 
-    Route::get('meal/store', [])->name('new-meal');
+    Route::get('meal/{meal?}', [MealController::class, 'index'])->name('meal');
+    Route::post('meal/{meal?}', [MealController::class, 'store'])->name('meal');
+    Route::get('meal/destory/{meal}', [MealController::class, 'destroy'])->name('meal.destroy');
 
     Route::get('update/{user}', [WebAuthController::class, 'registerIndex'])->name('update');
     Route::post('update/{user}', [WebAuthController::class, 'register'])->name('update');
 
-    Route::get('logout', [WebAuthController::class, 'logout'])->name('logout');
+    // Route::post('logout', [WebAuthController::class, 'logout'])->name('logout');
 });
 
 Route::get('test', function () {

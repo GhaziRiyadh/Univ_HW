@@ -27,7 +27,7 @@ class UpdateMealRequest extends FormRequest
         return [
             'desc' => 'string',
             'title' => 'string',
-            'image' => 'image',
+            'image' => $this->hasFile('image') ? 'image' : 'string',
         ];
     }
 }

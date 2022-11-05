@@ -2,16 +2,13 @@
 
 namespace App\View\Components\Web;
 
+use App\Models\Meal;
 use Illuminate\View\Component;
 
 class MenuCard extends Component
 {
-    /**
-     * Create a new component instance.
-     *
-     * @return void
-     */
-    public function __construct()
+
+    public function __construct(public $image, public $title, public $desc, public $id)
     {
         //
     }

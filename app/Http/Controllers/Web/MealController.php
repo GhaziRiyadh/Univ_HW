@@ -7,6 +7,7 @@ use App\Models\Meal;
 use App\Http\Requests\StoreMealRequest;
 use App\Http\Requests\UpdateMealRequest;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Mail;
 
 class MealController extends Controller
 {
@@ -15,19 +16,11 @@ class MealController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Meal $meal = null)
     {
-        return view('web.meal.index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return view('web.meals.index', [
+            'meal' => $meal
+        ]);
     }
 
     /**
@@ -36,56 +29,20 @@ class MealController extends Controller
      * @param  \App\Http\Requests\StoreMealRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreMealRequest $request)
+    public function store(UpdateMealRequest $request, Meal $meal = null)
     {
-        $data = $request->validated();
-        $data['image'] = $request->file('image')->store('Meals', options: 'upload');
-        Meal::query()->create($data);
-
-        return response()->json(true);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Meal  $meal
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Meal $meal)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Meal  $meal
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Meal $meal)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateMealRequest  $request
-     * @param  \App\Models\Meal  $meal
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateMealRequest $request, Meal $meal)
-    {
+        if (!$meal) {
+            $request->validate(['image' => 'required|image']);
+        }
         $data = $request->validated();
         if ($request->hasFile('image')) {
-            if (File::exists(storage_path("app/{$meal->image}")))
-                File::delete(storage_path("app/{$meal->image}"));
-            $data['image'] = $request->file('image')->store('Meals', options: 'upload');
+            if (File::exists(storage_path("app/{$meal?->image}")))
+                File::delete(storage_path("app/{$meal?->image}"));
+            $data['image'] = '/' . $request->file('image')->store('Meals', options: 'upload');
         }
+        Meal::query()->updateOrCreate(['id' => $meal?->id], $data);
 
-        $meal->update($data);
-
-        return response()->json('updated');
+        return redirect()->route('home');
     }
 
     /**
@@ -100,6 +57,6 @@ class MealController extends Controller
             File::delete(storage_path("app/{$meal->image}"));
         $meal->delete();
 
-        return response()->json(true);
+        return redirect()->route('home');
     }
 }
