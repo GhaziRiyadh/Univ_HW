@@ -30,6 +30,8 @@ Route::middleware([
     //     return view('dashboard');
     // })->name('dashboard');
 
+    Route::get('meal/store', [])->name('new-meal');
+
     Route::get('update/{user}', [WebAuthController::class, 'registerIndex'])->name('update');
     Route::post('update/{user}', [WebAuthController::class, 'register'])->name('update');
 
